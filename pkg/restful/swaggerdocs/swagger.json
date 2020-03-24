@@ -1,0 +1,30 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {},
+        "license": {}
+    },
+    "paths": {
+        "/api/v1/ping": {
+            "get": {
+                "description": "Check RESTful services port status",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "ping"
+                ],
+                "summary": "Return pong when services is normal",
+                "operationId": "Ping",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

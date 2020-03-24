@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package protos;
+
+service Miniprogram {
+    // 获取小程序配置
+    rpc GetMiniprogramByShopId (GetMiniprogramRequest) returns (GetMiniprogramReply) {
+    }
+
+
+}
+
+message GetMiniprogramRequest {
+    uint64 shopId = 1;
+}
+
+message GetMiniprogramReply {
+    string appId = 1;
+    string secret = 2;
+    string originalId =3;
+    Error err = 4;
+}
+
+// 错误信息
+message Error {
+    // 错误码
+    uint32 errorCode = 1;
+    // 展示给开发这记录日志用的错误信息
+    string errorMessageForDeveloper = 2;
+    // 展示给用户查看的错误信息
+    string errorMessageForUser = 3;
+}

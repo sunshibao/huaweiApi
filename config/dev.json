@@ -1,0 +1,32 @@
+{
+  "address": "127.0.0.1",
+  "restful": {
+    "port": 8086,
+    "mode": "debug",
+    "readWriteTimeout": "60s"
+  },
+  "rpc": {
+    "port": 8087,
+    "readWriteTimeout": "30s"
+  },
+  "mysql": {
+    "host": "127.0.0.1",
+    "port": 4000,
+    "username": "root",
+    "password": "",
+    "database": "huawei_api"
+  },
+  "etcd": {
+    "addresses": [
+      "127.0.0.1:2379"
+    ]
+  },
+  "redis": {
+    "addresses": [
+      "127.0.0.1:6379"
+    ]
+  },
+  "log": {
+    "level": "debug"
+  }
+}

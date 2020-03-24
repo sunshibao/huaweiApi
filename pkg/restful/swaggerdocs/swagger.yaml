@@ -1,0 +1,19 @@
+info:
+  contact: {}
+  license: {}
+paths:
+  /api/v1/ping:
+    get:
+      description: Check RESTful services port status
+      operationId: Ping
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Return pong when services is normal
+      tags:
+      - ping
+swagger: "2.0"
