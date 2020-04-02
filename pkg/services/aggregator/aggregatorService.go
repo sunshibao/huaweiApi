@@ -9,6 +9,11 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/jinzhu/gorm"
+
+	"huaweiApi/pkg/models/huawei"
+	huaweiRep "huaweiApi/pkg/repositorys/huawei"
 )
 
 type aggregatorService struct {
@@ -163,4 +168,20 @@ func HttpPostRequest(body *strings.Reader, url string) (bytes []byte, err error)
 	}
 	return bytes, nil
 
+}
+
+func AddPaymentRecord(paymentRecord *huawei.PaymentRecord) (err error) {
+
+	_, err = huaweiRep.GetPaymentRecordByPaymentId(paymentRecord.PaymentID)
+
+	if gorm.IsRecordNotFoundError(err) {
+		err = huaweiRep.AddPaymentRecord(paymentRecord)
+	} else {
+		err = huaweiRep.UpdatePaymentRecord(paymentRecord)
+	}
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
