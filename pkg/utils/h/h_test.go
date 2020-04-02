@@ -151,21 +151,21 @@ func TestE(t *testing.T) {
 			Want: struct {
 				Code           int
 				ResponseString string
-			}{Code: ENotFound.Status, ResponseString: `{"code":404,"msg":"NotFound"}` + "\n"},
+			}{Code: ENotFound.Status, ResponseString: `{"code":404,"msg":"NotFound"}`},
 		},
 		{
 			Input: EParamsError,
 			Want: struct {
 				Code           int
 				ResponseString string
-			}{Code: EParamsError.Status, ResponseString: `{"code":400,"msg":"ParamsError"}` + "\n"},
+			}{Code: EParamsError.Status, ResponseString: `{"code":400,"msg":"ParamsError"}`},
 		},
 		{
 			Input: errors.New("BadRequest"),
 			Want: struct {
 				Code           int
 				ResponseString string
-			}{Code: http.StatusInternalServerError, ResponseString: `{"code":500,"msg":"BadRequest"}` + "\n"},
+			}{Code: http.StatusInternalServerError, ResponseString: `{"code":500,"msg":"BadRequest"}`},
 		},
 	}
 
@@ -202,7 +202,7 @@ func TestData(t *testing.T) {
 			Want: struct {
 				Code           int
 				ResponseString string
-			}{Code: http.StatusOK, ResponseString: `{"code":0,"data":{"Hello":"World"}}` + "\n"},
+			}{Code: http.StatusOK, ResponseString: `{"code":0,"data":{"Hello":"World"}}`},
 		},
 		{
 			Input: struct {
@@ -215,7 +215,7 @@ func TestData(t *testing.T) {
 			Want: struct {
 				Code           int
 				ResponseString string
-			}{Code: http.StatusCreated, ResponseString: `{"code":0,"data":{"Hello":"World"}}` + "\n"},
+			}{Code: http.StatusCreated, ResponseString: `{"code":0,"data":{"Hello":"World"}}`},
 		},
 		{
 			Input: struct {
@@ -269,7 +269,7 @@ func TestR(t *testing.T) {
 			Want: struct {
 				Code           int
 				ResponseString string
-			}{Code: http.StatusOK, ResponseString: `{"Hello":"World"}` + "\n"},
+			}{Code: http.StatusOK, ResponseString: `{"Hello":"World"}`},
 		},
 		{
 			Input: struct {
@@ -282,7 +282,7 @@ func TestR(t *testing.T) {
 			Want: struct {
 				Code           int
 				ResponseString string
-			}{Code: http.StatusCreated, ResponseString: `{"Hello":"World"}` + "\n"},
+			}{Code: http.StatusCreated, ResponseString: `{"Hello":"World"}`},
 		},
 		{
 			Input: struct {

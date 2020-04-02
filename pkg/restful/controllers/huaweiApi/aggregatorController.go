@@ -26,3 +26,15 @@ func CreatePayment(c *gin.Context) {
 	}
 	h.Data(c, paymentReply)
 }
+func CreateSubscription(c *gin.Context) {
+
+	msisdn:=c.Param("msisdn")
+	productId:=c.Param("productId")
+	extRef:=c.Param("msisdn")
+
+	paymentReply, err := aggregator.CreateSubscription(msisdn, productId, extRef)
+	if err != nil {
+		return
+	}
+	h.Data(c, paymentReply)
+}

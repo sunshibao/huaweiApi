@@ -23,11 +23,11 @@ func (a *app) setRESTfulRoutes() {
 
 // 华为接口
 func (a *app) setAggregatorGouters(aggregator *gin.RouterGroup) {
-	aggregator.GET("/createPayment", huaweiApiController.CreatePayment)
+	aggregator.POST("/createPayment", huaweiApiController.CreatePayment)
+	aggregator.POST("/createSubscription", huaweiApiController.CreateSubscription)
 }
 
 func (a *app) setUserGouters(user *gin.RouterGroup) {
 	user.POST("/register", userController.UserRegister)
 	user.POST("/login", userController.UserLogin)
-
 }

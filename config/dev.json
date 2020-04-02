@@ -10,20 +10,15 @@
     "readWriteTimeout": "30s"
   },
   "mysql": {
-    "host": "127.0.0.1",
-    "port": 4000,
+    "host": "120.26.218.217",
+    "port": 3306,
     "username": "root",
-    "password": "",
+    "password": "sun18188",
     "database": "huawei_api"
   },
   "etcd": {
     "addresses": [
       "127.0.0.1:2379"
-    ]
-  },
-  "redis": {
-    "addresses": [
-      "127.0.0.1:6379"
     ]
   },
   "log": {

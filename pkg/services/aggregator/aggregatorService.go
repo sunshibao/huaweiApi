@@ -75,6 +75,60 @@ func CreatePayment() (paymentReply *CreatePaymentReply, err error) {
 	}
 	body := strings.NewReader(string(jsonBody))
 
+	bytes, err := HttpPostRequest(body, "https://159.138.167.235:17131/apiaccess/ita/createPayment/v1")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(bytes, &paymentReply); err != nil {
+		return nil, err
+
+	}
+	return paymentReply, nil
+}
+
+func CreateSubscription(msisdn string, productId string, extRef string) (paymentReply *CreatePaymentReply, err error) {
+
+	urlParam := &UrlParamView{
+		Msisdn:       msisdn,
+		OperatorCode: "70201",
+		ProductId:    productId,
+		ExtRef:       extRef,
+		ExtInfos:     make([]map[string]string, 0),
+	}
+	urlParam.ExtInfos = append(urlParam.ExtInfos,
+		map[string]string{
+			"key":   "channel",
+			"value": "SMS",
+		},
+		map[string]string{
+			"key":   "doi_channel",
+			"value": "SMS",
+		},
+	)
+
+	jsonBody, err := json.Marshal(urlParam)
+
+	if err != nil {
+		return
+	}
+	body := strings.NewReader(string(jsonBody))
+
+	bytes, err := HttpPostRequest(body, "https://159.138.167.235:17131/apiaccess/ita/createSubscription/v1")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(bytes, &paymentReply); err != nil {
+		return nil, err
+	}
+	return paymentReply, nil
+}
+
+func HttpPostRequest(body *strings.Reader, url string) (bytes []byte, err error) {
+
 	nonce := "66C92B11FF8A425FB8D4CCFE"
 	username := "67ef6805e6004cce9cce24b7f13767c6"
 	password := "1e88f55b4e034b1783e2686ec9dfbffd"
@@ -87,7 +141,7 @@ func CreatePayment() (paymentReply *CreatePaymentReply, err error) {
 	h.Write([]byte(signRawString))
 	passwordDigest := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
-	req, err := http.NewRequest("POST", "https://159.138.167.235:17131/apiaccess/ita/createSubscription/v1", body)
+	req, err := http.NewRequest("POST", url, body)
 	authorization := `"WSSE realm="SDP", profile="UsernameToken", type="Appkey"`
 	wsse := "UsernameToken Username=\"" + username + "\",PasswordDigest=\"" + passwordDigest + "\",Nonce=\"" + nonce + "\",Created=\"" + created + "\""
 	contentType := "Content-Type: application/json; charset=UTF-8"
@@ -102,17 +156,11 @@ func CreatePayment() (paymentReply *CreatePaymentReply, err error) {
 
 	respClient, _ := client.Do(req)
 
-	//defer respClient.Body.Close()
-
-	bytes, err := ioutil.ReadAll(respClient.Body)
+	bytes, err = ioutil.ReadAll(respClient.Body)
 
 	if err != nil {
 		return nil, err
 	}
+	return bytes, nil
 
-	if err := json.Unmarshal(bytes, &paymentReply); err != nil {
-		return nil, err
-
-	}
-	return paymentReply, nil
 }
