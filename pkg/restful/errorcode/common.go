@@ -1,12 +1,13 @@
 package errorcode
 
 const (
-	CommonError       = 500000
-	ParameterError    = 400000
-	JSONParseError    = 406001
-	AlreadyExistError = 406002
-	NotExistError     = 406003
-	NullDataError     = 406004
+	CommonError            = 500000
+	ParameterError         = 400000
+	JSONParseError         = 406001
+	AlreadyExistError      = 406002
+	NotExistError          = 406003
+	NullDataError          = 406004
+	EmailAlreadyExistError = 406005
 )
 
 var statusText = map[int]string{
@@ -16,6 +17,7 @@ var statusText = map[int]string{
 	AlreadyExistError: "Already Exist Error",
 	NotExistError:     "Not Exist Error",
 	NullDataError:     "Null Data Error",
+	EmailAlreadyExistError:"Email Already Exist Error",
 }
 
 func StatusText(code int) string {

@@ -28,10 +28,14 @@ func UserRegister(c *gin.Context) {
 
 	newUser := changeToUserRegister(requestData)
 
-	err = userService.UserRegister(newUser)
+	emailStatus, err := userService.UserRegister(newUser)
 
 	if err != nil {
 		h.InternalErr(c, errorcode.CommonError, errorcode.StatusText(errorcode.CommonError))
+		return
+	}
+	if emailStatus == 1 {
+		h.InternalErr(c, errorcode.EmailAlreadyExistError, errorcode.StatusText(errorcode.EmailAlreadyExistError))
 		return
 	}
 	h.Data(c, returncode.SuccessfulOption{Success: true})
