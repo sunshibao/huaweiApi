@@ -38,7 +38,7 @@ func CreateSubscription(c *gin.Context) {
 
 	msisdn := c.Param("msisdn")
 	productId := c.Param("productId")
-	extRef := c.Param("msisdn")
+	extRef := c.Param("extRef")
 
 	paymentReply, err := aggregator.CreateSubscription(msisdn, productId, extRef)
 	if err != nil {
