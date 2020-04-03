@@ -10,15 +10,16 @@ import (
 	userRep "huaweiApi/pkg/repositorys/user"
 )
 
-const EmailAlreadyExist  = 1
-const EmailAlNoExist  = 0
-func UserRegister(user *userModel.Users) (emailStatus int,err error) {
+const EmailAlreadyExist = 1
+const EmailAlNoExist = 0
+
+func UserRegister(user *userModel.Users) (emailStatus int, err error) {
 	emailStatus = EmailAlNoExist
 	_, err = userRep.GetUserInfo(user.Email)
 
 	if !gorm.IsRecordNotFoundError(err) {
 		emailStatus = EmailAlreadyExist
-		return emailStatus,nil
+		return emailStatus, nil
 	}
 
 	h := md5.New()
@@ -27,9 +28,9 @@ func UserRegister(user *userModel.Users) (emailStatus int,err error) {
 	user.Password = hex.EncodeToString(passwordMd5)
 	err = userRep.UserRegister(user)
 	if err != nil {
-		return emailStatus,err
+		return emailStatus, err
 	}
-	return emailStatus,nil
+	return emailStatus, nil
 
 }
 func UserLogin(email string, password string) (userResponse *userModel.Users, err error) {

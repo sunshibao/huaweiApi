@@ -11,13 +11,13 @@ const (
 )
 
 var statusText = map[int]string{
-	CommonError:       "Common Error",
-	ParameterError:    "Parameter Error",
-	JSONParseError:    "JSON Parse Error",
-	AlreadyExistError: "Already Exist Error",
-	NotExistError:     "Not Exist Error",
-	NullDataError:     "Null Data Error",
-	EmailAlreadyExistError:"Email Already Exist Error",
+	CommonError:            "Common Error",
+	ParameterError:         "Parameter Error",
+	JSONParseError:         "JSON Parse Error",
+	AlreadyExistError:      "Already Exist Error",
+	NotExistError:          "Not Exist Error",
+	NullDataError:          "Null Data Error",
+	EmailAlreadyExistError: "Email Already Exist Error",
 }
 
 func StatusText(code int) string {

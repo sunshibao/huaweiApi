@@ -80,6 +80,16 @@ func getSyncPaymentRequestData(c *gin.Context) (requestData *parameters.SyncPaym
 	return requestData, false
 }
 
+func GetPaymentInfo(c *gin.Context) {
+	paymentID := c.Param("paymentID")
+	paymentRecord, err := aggregator.GetPaymentRecordByPaymentId(paymentID)
+	if err != nil {
+		h.InternalErr(c, errorcode.NullDataError, errorcode.StatusText(errorcode.NullDataError))
+		return
+	}
+	h.Data(c, paymentRecord)
+}
+
 func changeAddPaymentRecord(requestData *parameters.SyncPaymentRequest) *huawei.PaymentRecord {
 	return &huawei.PaymentRecord{
 		PaymentID:     requestData.PaymentID,

@@ -185,3 +185,12 @@ func AddPaymentRecord(paymentRecord *huawei.PaymentRecord) (err error) {
 	}
 	return nil
 }
+
+func GetPaymentRecordByPaymentId(paymentID string) (paymentRecord *huawei.PaymentRecord, err error) {
+	paymentRecord, err = huaweiRep.GetPaymentRecordByPaymentId(paymentID)
+	if err != nil {
+		return nil, err
+	}
+	return paymentRecord, nil
+
+}

@@ -26,6 +26,7 @@ func (a *app) setAggregatorGouters(aggregator *gin.RouterGroup) {
 	aggregator.POST("/createPayment", huaweiApiController.CreatePayment)
 	aggregator.POST("/createSubscription", huaweiApiController.CreateSubscription)
 	aggregator.POST("/syncPayment", huaweiApiController.SyncPayment)
+	aggregator.GET("/getPaymentInfo/:paymentID", huaweiApiController.GetPaymentInfo)
 
 }
 
