@@ -52,13 +52,14 @@ func UserLogin(c *gin.Context) {
 	}
 	newUser := changeToUserLogin(requestData)
 
-	userResponse, err := userService.UserLogin(newUser.Email, newUser.Password)
+	userResponse, userToken, err := userService.UserLogin(newUser.Email, newUser.Password)
 
 	if err != nil {
 		h.InternalErr(c, errorcode.CommonError, errorcode.StatusText(errorcode.CommonError))
 		return
 	}
-	h.Data(c, toUserLoginVo(userResponse))
+
+	h.Data(c, toUserLoginVo(userResponse, userToken))
 }
 
 func userRegisterRequestData(c *gin.Context) (requestData *parameters.UserRegisterRequest, hasError bool) {
@@ -114,19 +115,21 @@ func changeToUserLogin(NewUser *parameters.UserLoginRequest) *user.Users {
 }
 
 type UserLoginVo struct {
-	Id       string `json:"id"`
-	UserName string `json:"userName"`
-	Email    string `json:"email"`
-	Mobile   string `json:"mobile"`
-	Gold     int64  `json:"gold"`
+	Id        string `json:"id"`
+	UserName  string `json:"userName"`
+	Email     string `json:"email"`
+	Mobile    string `json:"mobile"`
+	Gold      int64  `json:"gold"`
+	UserToken string `json:"userToken"`
 }
 
-func toUserLoginVo(user *userModel.Users) *UserLoginVo {
+func toUserLoginVo(user *userModel.Users, userToken string) *UserLoginVo {
 	return &UserLoginVo{
-		Id:       strconv.FormatUint(user.Id, 10),
-		UserName: user.UserName,
-		Mobile:   user.Mobile,
-		Email:    user.Email,
-		Gold:     user.Gold,
+		Id:        strconv.FormatUint(user.Id, 10),
+		UserName:  user.UserName,
+		Mobile:    user.Mobile,
+		Email:     user.Email,
+		Gold:      user.Gold,
+		UserToken: userToken,
 	}
 }

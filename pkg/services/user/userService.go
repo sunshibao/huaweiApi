@@ -6,8 +6,10 @@ import (
 
 	"github.com/jinzhu/gorm"
 
+	"huaweiApi/pkg/config"
 	userModel "huaweiApi/pkg/models/user"
 	userRep "huaweiApi/pkg/repositorys/user"
+	"huaweiApi/pkg/utils/middleware/auth"
 )
 
 const EmailAlreadyExist = 1
@@ -33,7 +35,7 @@ func UserRegister(user *userModel.Users) (emailStatus int, err error) {
 	return emailStatus, nil
 
 }
-func UserLogin(email string, password string) (userResponse *userModel.Users, err error) {
+func UserLogin(email string, password string) (userResponse *userModel.Users, userToken string, err error) {
 	userResponse, err = userRep.GetUserInfo(email)
 	if !gorm.IsRecordNotFoundError(err) {
 		h := md5.New()
@@ -41,8 +43,14 @@ func UserLogin(email string, password string) (userResponse *userModel.Users, er
 		passwordMd5 := h.Sum(nil)
 		newPassword := hex.EncodeToString(passwordMd5)
 		if userResponse.Password == newPassword {
-			return userResponse, nil
+			userToken, err := auth.NewUserJwtToken(userResponse.Id, nil, config.Config.RESTfulService.Auth.GetUserTokenKey())
+			if err != nil {
+				return nil, "", err
+			}
+
+			return userResponse, userToken, nil
 		}
 	}
-	return nil, err
+
+	return nil, "", err
 }

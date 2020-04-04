@@ -6,6 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+
+	"huaweiApi/pkg/restful/errorcode"
 )
 
 type H = map[string]interface{}
@@ -80,6 +82,14 @@ func E(c *gin.Context, httpStatus, errCode int, message string) {
 
 func InternalErr(c *gin.Context, errCode int, message string) {
 	E(c, http.StatusOK, errCode, message)
+}
+
+func TokenInvalid(c *gin.Context) {
+	E(c, http.StatusOK, errorcode.RequestTokenInvalidError,errorcode.StatusText(errorcode.RequestTokenInvalidError))
+}
+
+func TokenExpired(c *gin.Context) {
+	E(c, http.StatusOK, errorcode.RequestTokenExpiredError, errorcode.StatusText(errorcode.RequestTokenExpiredError))
 }
 
 func Data(c *gin.Context, data interface{}) {

@@ -15,5 +15,8 @@
 package constants
 
 const (
-	RequestID = "X-ReqId"
+	RequestID = "X-Request-ID"
+	UserID    = "X-UserId"
+	//C端用户token header名称
+	RequestUserToken = "X-UserToken"
 )

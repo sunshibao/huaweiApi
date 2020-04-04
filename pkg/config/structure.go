@@ -11,6 +11,7 @@ const (
 	DefaultListenPort              = uint16(8080)
 	DefaultLogLevel                = "info"
 	DefaultReadWriteTimeout        = time.Minute
+	DefaultUserAuthTokenKey        = "user_token_key"
 	DefaultServiceId               = 0
 	DefaultEtcdAddress             = "http://127.0.0.1:2379"
 	DefaultMySQLHost               = "127.0.0.1"
@@ -54,9 +55,10 @@ func (config *configuration) GetListenAddress() string {
 }
 
 type restfulServiceSetting struct {
-	Port             uint16         `json:"port"`
-	Mode             WebServiceMode `json:"mode"`
-	ReadWriteTimeout Duration       `json:"readWriteTimeout"`
+	Port             uint16             `json:"port"`
+	Mode             WebServiceMode     `json:"mode"`
+	ReadWriteTimeout Duration           `json:"readWriteTimeout"`
+	Auth             restfulAuthSetting `json:"auth"`
 }
 
 func (service *restfulServiceSetting) GetPort() uint16 {
@@ -79,6 +81,17 @@ func (service *restfulServiceSetting) GetReadWriteTimeout() time.Duration {
 		return DefaultReadWriteTimeout
 	}
 	return service.ReadWriteTimeout.Duration
+}
+
+type restfulAuthSetting struct {
+	UserTokenKey string `json:"userTokenKey"`
+}
+
+func (setting *restfulAuthSetting) GetUserTokenKey() string {
+	if len(setting.UserTokenKey) == 0 {
+		return DefaultUserAuthTokenKey
+	}
+	return setting.UserTokenKey
 }
 
 type rpcServiceSetting struct {
