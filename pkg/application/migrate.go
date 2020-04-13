@@ -15,6 +15,7 @@ func (a *app) migrateDatabases() {
 	logrus.Info("starting to migrate database")
 	a.migrateDatabaseAndLogError(user.Users{})
 	a.migrateDatabaseAndLogError(huawei.PaymentRecord{})
+	a.migrateDatabaseAndLogError(user.DeductionRecord{})
 	logrus.Info("migrate database succeed")
 }
 

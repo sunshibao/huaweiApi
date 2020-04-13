@@ -10,6 +10,7 @@ const (
 	EmailAlreadyExistError   = 406005
 	RequestTokenInvalidError = 406006 // 请求token无效
 	RequestTokenExpiredError = 406007 // 请求token过期
+	BalanceDeficiencyError   = 406008 // 余额不足
 )
 
 var statusText = map[int]string{
@@ -22,6 +23,7 @@ var statusText = map[int]string{
 	EmailAlreadyExistError:   "Email Already Exist Error",
 	RequestTokenInvalidError: "Request Token Invalid Error",
 	RequestTokenExpiredError: "Request Token Expired rror",
+	BalanceDeficiencyError:   "Balance Deficiency Error",
 }
 
 func StatusText(code int) string {

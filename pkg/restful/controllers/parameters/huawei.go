@@ -29,3 +29,13 @@ type SyncPaymentRequest struct {
 func (request *SyncPaymentRequest) Validate() error {
 	return validator.NewWrapper().Validate()
 }
+
+type CreateSubscriptionRequest struct {
+	Msisdn     string `json:"msisdn"`
+	ProductID  string `json:"productId"`
+	ExtRef     string `json:"extRef"`
+}
+
+func (request *CreateSubscriptionRequest) Validate() error {
+	return validator.NewWrapper().Validate()
+}

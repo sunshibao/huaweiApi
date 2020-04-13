@@ -13,6 +13,7 @@ import (
 	userService "huaweiApi/pkg/services/user"
 	"huaweiApi/pkg/utils/h"
 	"huaweiApi/pkg/utils/log"
+	"huaweiApi/pkg/utils/middleware/auth"
 	"huaweiApi/pkg/utils/validator"
 )
 
@@ -62,6 +63,28 @@ func UserLogin(c *gin.Context) {
 	h.Data(c, toUserLoginVo(userResponse, userToken))
 }
 
+func DeductionGold(c *gin.Context) {
+	userId := auth.GetUserId(c)
+	requestData, hasError := goldRequestData(c)
+	if hasError {
+		return
+	}
+	gold := requestData.Gold
+	goldType := requestData.Type
+
+	status, err := userService.DeductionGold(userId, gold, goldType)
+
+	if err != nil {
+		h.InternalErr(c, errorcode.NullDataError, errorcode.StatusText(errorcode.NullDataError))
+		return
+	}
+
+	if status == 2 {
+		h.InternalErr(c, errorcode.BalanceDeficiencyError, errorcode.StatusText(errorcode.BalanceDeficiencyError))
+	}
+	h.Data(c, returncode.SuccessfulOption{Success: true})
+}
+
 func userRegisterRequestData(c *gin.Context) (requestData *parameters.UserRegisterRequest, hasError bool) {
 
 	var err error
@@ -91,6 +114,22 @@ func userLoginRequestData(c *gin.Context) (requestData *parameters.UserLoginRequ
 	}
 
 	logger.WithField("data", requestData).Debug("get create user data")
+	return requestData, false
+}
+
+func goldRequestData(c *gin.Context) (requestData *parameters.GoldRequest, hasError bool) {
+
+	var err error
+	requestData = new(parameters.GoldRequest)
+	logger := log.ReqEntry(c)
+
+	if err = validator.Params(c, requestData); err != nil {
+		logger.WithField("action", "parameter json parse").Info(err)
+		h.InternalErr(c, errorcode.JSONParseError, errorcode.StatusText(errorcode.JSONParseError))
+		return nil, true
+	}
+
+	logger.WithField("data", requestData).Debug("gold Request Data")
 	return requestData, false
 }
 

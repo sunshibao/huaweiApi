@@ -14,6 +14,10 @@ import (
 
 const EmailAlreadyExist = 1
 const EmailAlNoExist = 0
+const BalanceNormal = 1     // 正常
+const BalanceDeficiency = 2 // 余额不足
+const AddGoldType  = 1 //增加金币
+const DelGoldType  = 2 //扣减金币
 
 func UserRegister(user *userModel.Users) (emailStatus int, err error) {
 	emailStatus = EmailAlNoExist
@@ -53,4 +57,34 @@ func UserLogin(email string, password string) (userResponse *userModel.Users, us
 	}
 
 	return nil, "", err
+}
+
+func DeductionGold(id uint64, gold int64, goldType uint8) (status int, err error) {
+	users, err := userRep.GetUserInfoById(id)
+
+	oldGold := users.Gold
+	if gold > oldGold {
+		return BalanceDeficiency, err
+	}
+	var newGold = oldGold
+	if goldType == AddGoldType {
+		newGold = oldGold - gold
+	} else {
+		newGold = oldGold + gold
+	}
+	err = userRep.DeductionGold(id, newGold)
+	if err != nil {
+		return BalanceDeficiency, err
+	}
+
+	deductionRecord := new(userModel.DeductionRecord)
+	deductionRecord.UserId = id
+	deductionRecord.Gold = gold
+	err = userRep.AddDeductionRecord(deductionRecord)
+
+	if err != nil {
+		return BalanceDeficiency, err
+	}
+
+	return BalanceNormal, nil
 }

@@ -13,7 +13,9 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"huaweiApi/pkg/models/huawei"
+	userModel "huaweiApi/pkg/models/user"
 	huaweiRep "huaweiApi/pkg/repositorys/huawei"
+	userRep "huaweiApi/pkg/repositorys/user"
 )
 
 type aggregatorService struct {
@@ -53,13 +55,13 @@ type CreatePaymentReply struct {
 	Code        string `json:"code"`
 }
 
-func CreatePayment() (paymentReply *CreatePaymentReply, err error) {
+func CreatePayment(msisdn string, productId string, extRef string) (paymentReply *CreatePaymentReply, err error) {
 
 	urlParam := &UrlParamView{
-		Msisdn:       "27785385741",
+		Msisdn:       msisdn,
 		OperatorCode: "70201",
-		ProductId:    "948d7b50-9f3f-4a0e-9a28-d73c15ba5141",
-		ExtRef:       "1e88f55b4e034b1783e2686ec9dfbffd",
+		ProductId:    productId,
+		ExtRef:       extRef,
 		ExtInfos:     make([]map[string]string, 0),
 	}
 	urlParam.ExtInfos = append(urlParam.ExtInfos,
@@ -90,11 +92,11 @@ func CreatePayment() (paymentReply *CreatePaymentReply, err error) {
 		return nil, err
 
 	}
+
 	return paymentReply, nil
 }
 
 func CreateSubscription(msisdn string, productId string, extRef string) (paymentReply *CreatePaymentReply, err error) {
-
 	urlParam := &UrlParamView{
 		Msisdn:       msisdn,
 		OperatorCode: "70201",
@@ -170,7 +172,7 @@ func HttpPostRequest(body *strings.Reader, url string) (bytes []byte, err error)
 
 }
 
-func AddPaymentRecord(paymentRecord *huawei.PaymentRecord) (err error) {
+func AddPaymentRecord(paymentRecord *huawei.PaymentRecord, userId uint64) (err error) {
 
 	_, err = huaweiRep.GetPaymentRecordByPaymentId(paymentRecord.PaymentID)
 
@@ -183,6 +185,23 @@ func AddPaymentRecord(paymentRecord *huawei.PaymentRecord) (err error) {
 	if err != nil {
 		return err
 	}
+	if paymentRecord.Status == 2 {
+		user := new(userModel.Users)
+
+		user.Id = userId
+
+		users, err := userRep.GetUserInfoById(userId)
+		if err != nil {
+			return err
+		}
+		user.Gold = users.Gold + 4000
+		//充值
+		err = userRep.AddUserGold(user)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

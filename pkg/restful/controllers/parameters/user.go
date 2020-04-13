@@ -32,3 +32,12 @@ func (request *UserLoginRequest) Validate() error {
 		validator.ValidateString(request.Password, "password", validator.ItemNotEmptyLimit, PasswordLengthLimit),
 	).Validate()
 }
+
+type GoldRequest struct {
+	Gold int64 `json:"gold"`
+	Type uint8 `json:"type"`
+}
+
+func (request *GoldRequest) Validate() error {
+	return validator.NewWrapper().Validate()
+}

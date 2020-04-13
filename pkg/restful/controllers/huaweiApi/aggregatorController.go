@@ -12,6 +12,7 @@ import (
 	"huaweiApi/pkg/services/aggregator"
 	"huaweiApi/pkg/utils/h"
 	"huaweiApi/pkg/utils/log"
+	"huaweiApi/pkg/utils/middleware/auth"
 	"huaweiApi/pkg/utils/validator"
 )
 
@@ -27,18 +28,27 @@ type CreatePaymentRequest struct {
 }
 
 func CreatePayment(c *gin.Context) {
-
-	paymentReply, err := aggregator.CreatePayment()
+	requestData, hasError := createSubscriptionRequestData(c)
+	if hasError {
+		return
+	}
+	msisdn := requestData.Msisdn
+	productId := requestData.ProductID
+	extRef := requestData.ExtRef
+	paymentReply, err := aggregator.CreatePayment(msisdn, productId, extRef)
 	if err != nil {
 		return
 	}
 	h.Data(c, paymentReply)
 }
 func CreateSubscription(c *gin.Context) {
-
-	msisdn := c.Param("msisdn")
-	productId := c.Param("productId")
-	extRef := c.Param("extRef")
+	requestData, hasError := createSubscriptionRequestData(c)
+	if hasError {
+		return
+	}
+	msisdn := requestData.Msisdn
+	productId := requestData.ProductID
+	extRef := requestData.ExtRef
 
 	paymentReply, err := aggregator.CreateSubscription(msisdn, productId, extRef)
 	if err != nil {
@@ -48,14 +58,14 @@ func CreateSubscription(c *gin.Context) {
 }
 
 func SyncPayment(c *gin.Context) {
-
+	userId := auth.GetUserId(c)
 	requestData, hasError := getSyncPaymentRequestData(c)
 	if hasError {
 		return
 	}
 	record := changeAddPaymentRecord(requestData)
 
-	err := aggregator.AddPaymentRecord(record)
+	err := aggregator.AddPaymentRecord(record,userId)
 
 	if err != nil {
 		return
@@ -110,4 +120,19 @@ func changeAddPaymentRecord(requestData *parameters.SyncPaymentRequest) *huawei.
 		LastBilledAt:  requestData.PaymentExt.LastBilledAt,
 		NextBillingAt: requestData.PaymentExt.NextBillingAt,
 	}
+}
+
+func createSubscriptionRequestData(c *gin.Context) (requestData *parameters.CreateSubscriptionRequest, hasError bool) {
+	var err error
+	requestData = new(parameters.CreateSubscriptionRequest)
+	logger := log.ReqEntry(c)
+
+	if err = validator.Params(c, requestData); err != nil {
+		logger.WithField("action", "parameter json parse").Info(err)
+		h.InternalErr(c, errorcode.JSONParseError, errorcode.StatusText(errorcode.JSONParseError))
+		return nil, true
+	}
+
+	logger.WithField("data", fmt.Sprintf("%#v", requestData)).Debug("createSubscriptionRequestData")
+	return requestData, false
 }
