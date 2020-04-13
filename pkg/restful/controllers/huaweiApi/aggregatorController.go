@@ -28,7 +28,7 @@ type CreatePaymentRequest struct {
 }
 
 func CreatePayment(c *gin.Context) {
-	requestData, hasError := createSubscriptionRequestData(c)
+	requestData, hasError := createPaymentRequestData(c)
 	if hasError {
 		return
 	}
@@ -136,3 +136,19 @@ func createSubscriptionRequestData(c *gin.Context) (requestData *parameters.Crea
 	logger.WithField("data", fmt.Sprintf("%#v", requestData)).Debug("createSubscriptionRequestData")
 	return requestData, false
 }
+
+func createPaymentRequestData(c *gin.Context) (requestData *parameters.CreatePaymentRequest, hasError bool) {
+	var err error
+	requestData = new(parameters.CreatePaymentRequest)
+	logger := log.ReqEntry(c)
+
+	if err = validator.Params(c, requestData); err != nil {
+		logger.WithField("action", "parameter json parse").Info(err)
+		h.InternalErr(c, errorcode.JSONParseError, errorcode.StatusText(errorcode.JSONParseError))
+		return nil, true
+	}
+
+	logger.WithField("data", fmt.Sprintf("%#v", requestData)).Debug("createSubscriptionRequestData")
+	return requestData, false
+}
+

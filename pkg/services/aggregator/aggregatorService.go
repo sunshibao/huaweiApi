@@ -32,6 +32,32 @@ type (
 )
 
 type CreatePaymentReply struct {
+	Code                 string `json:"code"`
+	Description          string `json:"description"`
+	ContractSubscription struct {
+		SubscriptionID  string    `json:"subscriptionId"`
+		ProductID       string    `json:"productId"`
+		Status          int       `json:"status"`
+		Amount          int       `json:"amount"`
+		ExtRef          string    `json:"extRef"`
+		Msisdn          string    `json:"msisdn"`
+		SubTime         time.Time `json:"subTime"`
+		StartTime       time.Time `json:"startTime"`
+		EndTime         time.Time `json:"endTime"`
+		SubscriptionExt struct {
+			SvcName       string    `json:"svcName"`
+			BillingCycle  string    `json:"billingCycle"`
+			NextBillingAt time.Time `json:"nextBillingAt"`
+			BillingRate   string    `json:"billingRate"`
+			ChannelName   string    `json:"channelName"`
+			RenewalType   string    `json:"renewalType"`
+			LastBilledAt  time.Time `json:"lastBilledAt"`
+			UpdatedAt     time.Time `json:"updatedAt"`
+		} `json:"paymentExt"`
+	} `json:"contractSubscription"`
+}
+
+type CreateSubscriptionReply struct {
 	ContractSubscription struct {
 		SubscriptionID  string    `json:"subscriptionId"`
 		ProductID       string    `json:"productId"`
@@ -96,7 +122,7 @@ func CreatePayment(msisdn string, productId string, extRef string) (paymentReply
 	return paymentReply, nil
 }
 
-func CreateSubscription(msisdn string, productId string, extRef string) (paymentReply *CreatePaymentReply, err error) {
+func CreateSubscription(msisdn string, productId string, extRef string) (subscriptionReply *CreateSubscriptionReply, err error) {
 	urlParam := &UrlParamView{
 		Msisdn:       msisdn,
 		OperatorCode: "70201",
@@ -128,10 +154,10 @@ func CreateSubscription(msisdn string, productId string, extRef string) (payment
 		return nil, err
 	}
 
-	if err := json.Unmarshal(bytes, &paymentReply); err != nil {
+	if err := json.Unmarshal(bytes, &subscriptionReply); err != nil {
 		return nil, err
 	}
-	return paymentReply, nil
+	return subscriptionReply, nil
 }
 
 func HttpPostRequest(body *strings.Reader, url string) (bytes []byte, err error) {

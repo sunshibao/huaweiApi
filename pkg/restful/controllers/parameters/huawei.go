@@ -36,6 +36,16 @@ type CreateSubscriptionRequest struct {
 	ExtRef     string `json:"extRef"`
 }
 
+type CreatePaymentRequest struct {
+	Msisdn     string `json:"msisdn"`
+	ProductID  string `json:"productId"`
+	ExtRef     string `json:"extRef"`
+}
+
 func (request *CreateSubscriptionRequest) Validate() error {
+	return validator.NewWrapper().Validate()
+}
+
+func (request *CreatePaymentRequest) Validate() error {
 	return validator.NewWrapper().Validate()
 }
