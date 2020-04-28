@@ -1,10 +1,12 @@
 package user
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 
+	"huaweiApi/pkg/databases"
 	"huaweiApi/pkg/models/user"
 	userModel "huaweiApi/pkg/models/user"
 	"huaweiApi/pkg/restful/controllers/parameters"
@@ -63,6 +65,40 @@ func UserLogin(c *gin.Context) {
 	h.Data(c, toUserLoginVo(userResponse, userToken))
 }
 
+func GetUserInfo(c *gin.Context) {
+	userId := auth.GetUserId(c)
+
+	userResponse, err := userService.GetUserInfo(userId)
+	if err != nil {
+		h.InternalErr(c, errorcode.CommonError, errorcode.StatusText(errorcode.CommonError))
+		return
+	}
+
+	h.Data(c, userResponse)
+}
+
+func UpdateUser(c *gin.Context) {
+	var (
+		err error
+	)
+	requestData, hasError := userRegisterRequestData(c)
+	if hasError {
+		return
+	}
+
+	fmt.Println(requestData.Id)
+	newUser := changeToUpdateUser(requestData)
+
+	err = userService.UpdateUser(newUser)
+
+	if err != nil {
+		h.InternalErr(c, errorcode.CommonError, errorcode.StatusText(errorcode.CommonError))
+		return
+	}
+
+	h.Data(c, returncode.SuccessfulOption{Success: true})
+}
+
 func DeductionGold(c *gin.Context) {
 	userId := auth.GetUserId(c)
 	requestData, hasError := goldRequestData(c)
@@ -96,6 +132,13 @@ func userRegisterRequestData(c *gin.Context) (requestData *parameters.UserRegist
 		h.InternalErr(c, errorcode.JSONParseError, errorcode.StatusText(errorcode.JSONParseError))
 		return nil, true
 	}
+
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		h.InternalErr(c, errorcode.JSONParseError, errorcode.StatusText(errorcode.JSONParseError))
+		return nil, true
+	}
+	requestData.Id = id
 
 	logger.WithField("data", requestData).Debug("get create user data")
 	return requestData, false
@@ -141,6 +184,21 @@ func changeToUserRegister(NewUser *parameters.UserRegisterRequest) *user.Users {
 		Email:    NewUser.Email,
 		Mobile:   NewUser.Mobile,
 		Password: NewUser.Password,
+	}
+}
+
+//类型转换
+func changeToUpdateUser(NewUser *parameters.UserRegisterRequest) *user.Users {
+
+	return &user.Users{
+		BaseModel: databases.BaseModel{
+			Id: NewUser.Id,
+		},
+		UserName: NewUser.UserName,
+		Email:    NewUser.Email,
+		Mobile:   NewUser.Mobile,
+		Password: NewUser.Password,
+		Gold:     NewUser.Gold,
 	}
 }
 

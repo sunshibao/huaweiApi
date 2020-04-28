@@ -16,6 +16,15 @@ func UserRegister(user *userModel.Users) (err error) {
 	return nil
 }
 
+func UpdateUser(user *userModel.Users) (err error) {
+	userSetting := new(userModel.Users)
+	err = connection.GetMySQL().Model(userSetting).Debug().Where("id=?", user.Id).Update(user).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetUserInfo(email string) (user *userModel.Users, err error) {
 	userSetting := new(userModel.Users)
 	err = connection.GetMySQL().Where("email=?", email).First(userSetting).Error
@@ -53,11 +62,3 @@ func AddDeductionRecord(deductionRecord *userModel.DeductionRecord) (err error) 
 	return nil
 }
 
-func AddUserGold(user *userModel.Users) (err error) {
-	userSetting := new(userModel.Users)
-	err = connection.GetMySQL().Model(userSetting).Debug().Where("id=?", user.Id).Update(user).Error
-	if err != nil {
-		return err
-	}
-	return nil
-}

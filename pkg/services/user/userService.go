@@ -16,8 +16,8 @@ const EmailAlreadyExist = 1
 const EmailAlNoExist = 0
 const BalanceNormal = 1     // 正常
 const BalanceDeficiency = 2 // 余额不足
-const AddGoldType  = 1 //增加金币
-const DelGoldType  = 2 //扣减金币
+const AddGoldType = 1       //增加金币
+const DelGoldType = 2       //扣减金币
 
 func UserRegister(user *userModel.Users) (emailStatus int, err error) {
 	emailStatus = EmailAlNoExist
@@ -87,4 +87,23 @@ func DeductionGold(id uint64, gold int64, goldType uint8) (status int, err error
 	}
 
 	return BalanceNormal, nil
+}
+
+func GetUserInfo(id uint64) (userResponse *userModel.Users, err error) {
+	userResponse, err = userRep.GetUserInfoById(id)
+	if !gorm.IsRecordNotFoundError(err) {
+		return userResponse, nil
+	}
+
+	return nil, err
+}
+
+func UpdateUser(user *userModel.Users) (err error) {
+	err = userRep.UpdateUser(user)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

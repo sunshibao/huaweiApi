@@ -31,32 +31,6 @@ type (
 	}
 )
 
-type CreatePaymentReply struct {
-	Code                 string `json:"code"`
-	Description          string `json:"description"`
-	ContractSubscription struct {
-		SubscriptionID  string    `json:"subscriptionId"`
-		ProductID       string    `json:"productId"`
-		Status          int       `json:"status"`
-		Amount          int       `json:"amount"`
-		ExtRef          string    `json:"extRef"`
-		Msisdn          string    `json:"msisdn"`
-		SubTime         time.Time `json:"subTime"`
-		StartTime       time.Time `json:"startTime"`
-		EndTime         time.Time `json:"endTime"`
-		SubscriptionExt struct {
-			SvcName       string    `json:"svcName"`
-			BillingCycle  string    `json:"billingCycle"`
-			NextBillingAt time.Time `json:"nextBillingAt"`
-			BillingRate   string    `json:"billingRate"`
-			ChannelName   string    `json:"channelName"`
-			RenewalType   string    `json:"renewalType"`
-			LastBilledAt  time.Time `json:"lastBilledAt"`
-			UpdatedAt     time.Time `json:"updatedAt"`
-		} `json:"paymentExt"`
-	} `json:"contractSubscription"`
-}
-
 type CreateSubscriptionReply struct {
 	ContractSubscription struct {
 		SubscriptionID  string    `json:"subscriptionId"`
@@ -77,6 +51,29 @@ type CreateSubscriptionReply struct {
 		ExtRef  string    `json:"extRef"`
 		Msisdn  string    `json:"msisdn"`
 	} `json:"contractSubscription"`
+	Description string `json:"description"`
+	Code        string `json:"code"`
+}
+
+type CreatePaymentReply struct {
+	PaymentInformation struct {
+		PaymentID  string `json:"paymentId"`
+		ExtRef     string `json:"extRef"`
+		PaymentExt struct {
+			SvcName      string    `json:"svcName"`
+			BillingRate  int       `json:"billingRate"`
+			BillingCycle string    `json:"billingCycle"`
+			UpdatedAt    time.Time `json:"updatedAt"`
+			ChannelName  string    `json:"channelName"`
+			RenewalType  string    `json:"renewalType"`
+		} `json:"paymentExt"`
+		EndTime   time.Time `json:"endTime"`
+		Status    int       `json:"status"`
+		Amount    int       `json:"amount"`
+		ProductID string    `json:"productId"`
+		Msisdn    string    `json:"msisdn"`
+		SubTime   time.Time `json:"subTime"`
+	} `json:"paymentInformation"`
 	Description string `json:"description"`
 	Code        string `json:"code"`
 }
@@ -222,7 +219,7 @@ func AddPaymentRecord(paymentRecord *huawei.PaymentRecord, userId uint64) (err e
 		}
 		user.Gold = users.Gold + 4000
 		//充值
-		err = userRep.AddUserGold(user)
+		err = userRep.UpdateUser(user)
 		if err != nil {
 			return err
 		}

@@ -10,6 +10,7 @@ type UserRegisterRequest struct {
 	Email    string `json:"email"`
 	Mobile   string `json:"mobile"`
 	Password string `json:"password"`
+	Gold     int64  `json:"gold"`
 }
 
 func (request *UserRegisterRequest) Validate() error {

@@ -46,5 +46,10 @@ func (a *app) setUserGouters(user *gin.RouterGroup) {
 	user.POST("/register", userController.UserRegister)
 	user.POST("/login", userController.UserLogin)
 	user.POST("/deductionGold", userController.DeductionGold)
+	user.GET("/getUserInfo", userController.GetUserInfo)
+	user.POST("/updateUser/:id", userController.UpdateUser)
+
+
+
 
 }
